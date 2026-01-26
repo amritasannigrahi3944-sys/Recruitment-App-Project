@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: candidate-service
+  labels:
+    app: candidate-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: candidate-service
+  template:
+    metadata:
+      labels:
+        app: candidate-service
+    spec:
+      containers:
+      - name: candidate-service
+        image: myacr.azurecr.io/candidate-service:build-45
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 3000
+        envFrom:
+          - configMapRef:
+              name: candidate-config
+          - secretRef:
+              name: candidate-secret
+        volumeMounts:
+          - name: data
+            mountPath: /data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: candidate-pvc
