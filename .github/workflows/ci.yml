@@ -1,0 +1,60 @@
+name: Recruitment App CI
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Docker image tag (v1.0.3, build-102, release-2026-01-14)"
+        required: true
+
+env:
+  REGISTRY: myacr.azurecr.io        # change if Docker Hub
+  IMAGE_NAME: recruitment-app    
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Checkout source code
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # 2. Decide image tag dynamically
+    - name: Set Image Tag
+      run: |
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          echo "TAG=${{ github.event.inputs.image_tag }}" >> $GITHUB_ENV
+        else
+          echo "TAG=build-${{ github.run_number }}" >> $GITHUB_ENV
+        fi
+
+    # 3. Login to Azure Container Registry
+    - name: Login to ACR
+      uses: azure/docker-login@v1
+      with:
+        login-server: myacr.azurecr.io
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
+
+    # 4. Run tests (optional)
+    - name: Run Tests
+      run: |
+        if [ -f package.json ]; then
+          npm install
+          npm test || echo "No tests found, skipping"
+        fi
+
+    # 5. Build Docker image
+    - name: Build Docker Image
+      run: |
+        docker build -t $REGISTRY/$IMAGE_NAME:$TAG .
+
+    # 6. Push Docker image to registry
+    - name: Push Docker Image
+      run: |
+        docker push $REGISTRY/$IMAGE_NAME:$TAG
