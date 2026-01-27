@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: recruitment-config
+  namespace: recruitment
+data:
+  APP_ENV: "production"
+  SERVICE_NAME: "candidate-service"
+  DB_HOST: "candidate-db"
+  DB_PORT: "5432"
