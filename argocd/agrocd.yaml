@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: recruitment-app
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/amritasannigrahi3944-sys/Recruitment-App-Project.git
+    targetRevision: azure-devops
+    path: charts/recruitment-app
+    helm:
+      valueFiles:
+        - values.yaml
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: recruitment-ns
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
