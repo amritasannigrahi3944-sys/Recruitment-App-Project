@@ -1,0 +1,47 @@
+namespace: recruitment-ns
+
+recruitmentApp:
+  name: recruitment-app
+  replicas: 2
+
+  image:
+    repository: amritarecruitACR.azurecr.io/recruitment-app
+    tag: "10268"
+
+  containerPort: 3000
+
+  service:
+    name: recruitment-service
+    type: LoadBalancer
+    port: 80
+    targetPort: 3000
+
+  env:
+    MONGO_URL: mongodb://mongo:27017/hr_system
+    NODE_ENV: production
+
+mongodb:
+  name: mongo
+  replicas: 1
+
+  image:
+    repository: mongo
+    tag: "6.0.6"
+
+  containerPort: 27017
+
+  service:
+    name: mongo
+    type: ClusterIP
+    port: 27017
+
+  pvc:
+    name: mongo-pvc
+    accessMode: ReadWriteOnce
+    storageClassName: managed-csi
+    size: 5Gi
+
+secret:
+  name: mongo-secret
+  username: hrapp
+  password: hrapp123
