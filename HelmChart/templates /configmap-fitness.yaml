@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.configMap.name }}
+  namespace: {{ .Values.namespace }}
+data:
+  MONGODB_URI: "{{ .Values.fitnessApp.env.MONGODB_URI }}"
+  PORT: "{{ .Values.fitnessApp.env.PORT }}"
+  HOST: "{{ .Values.fitnessApp.env.HOST }}"
+  NODE_ENV: "{{ .Values.fitnessApp.env.NODE_ENV }}"
