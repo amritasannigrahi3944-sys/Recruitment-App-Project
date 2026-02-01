@@ -1,6 +1,0 @@
-apiVersion: v2
-name: recruitment-app
-description: Helm chart for Recruitment Application
-type: application
-version: 1.0.0
-appVersion: "6.0.6"
