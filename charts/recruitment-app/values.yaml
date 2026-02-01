@@ -17,7 +17,7 @@ recruitmentApp:
     targetPort: 3000
 
   env:
-    MONGO_URL: mongodb://mongo:27017/hr_system
+    MONGO_URL: mongodb://mongo:27017/recruitment_system
     NODE_ENV: production
 
 mongodb:
@@ -43,5 +43,5 @@ mongodb:
 
 secret:
   name: mongo-secret
-  username: hrapp
-  password: hrapp123
+  username: recruitapp
+  password: recruitapp123
