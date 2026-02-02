@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.fitnessApp.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.fitnessApp.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.fitnessApp.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.fitnessApp.name }}
+      annotations:
+        ad.datadoghq.com/{{ .Values.fitnessApp.name }}.logs: >-
+          [{"source":"{{ .Values.fitnessApp.datadog.logsSource }}","service":"{{ .Values.fitnessApp.datadog.service1 }}"},
+           {"source":"{{ .Values.fitnessApp.datadog.logsSource }}","service":"{{ .Values.fitnessApp.datadog.service2 }}"}]
+    spec:
+      containers:
+        - name: {{ .Values.fitnessApp.name }}
+          image: "{{ .Values.fitnessApp.image.repository }}:{{ .Values.fitnessApp.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.fitnessApp.containerPort }}
+          env:
+            - name: MONGODB_URI
+              value: "{{ .Values.fitnessApp.env.MONGODB_URI }}"
+            - name: PORT
+              value: "{{ .Values.fitnessApp.env.PORT }}"
+            - name: HOST
+              value: "{{ .Values.fitnessApp.env.HOST }}"
+            - name: NODE_ENV
+              value: "{{ .Values.fitnessApp.env.NODE_ENV }}"
+            - name: DD_AGENT_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: DD_TRACE_AGENT_PORT
+              value: "{{ .Values.fitnessApp.datadog.tracePort }}"
+            - name: DD_ENV
+              value: "{{ .Values.fitnessApp.datadog.env }}"
+            - name: DD_SERVICE
+              value: "{{ .Values.fitnessApp.datadog.service }}"
+            - name: DD_VERSION
+              value: "{{ .Values.fitnessApp.datadog.version }}"
