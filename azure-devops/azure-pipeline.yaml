@@ -19,7 +19,7 @@ steps:
     command: buildAndPush
     repository: $(imageName)
     dockerfile: Dockerfile
-    containerRegistry: amritaservice2
+    containerRegistry: AmritaRecruitServiceACR
     tags: |
       $(tag)
       
