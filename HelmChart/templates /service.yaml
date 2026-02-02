@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.fitnessApp.service.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: {{ .Values.fitnessApp.name }}
+  ports:
+    - port: {{ .Values.fitnessApp.service.port }}
+      targetPort: {{ .Values.fitnessApp.service.targetPort }}
+  type: {{ .Values.fitnessApp.service.type }}
