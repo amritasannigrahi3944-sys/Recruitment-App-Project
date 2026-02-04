@@ -27,7 +27,7 @@ configMap:
   name: recruitment-configmap
 
 # ✅ PVC only REFERENCES existing StorageClass (does NOT create it)
-RecruimentPVC:
+RecruitmentPVC:
   name: Recruitment-pvc
   accessMode: ReadWriteMany
   storageClassName: azurefile-csi
