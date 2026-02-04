@@ -1,60 +1,68 @@
-name: Recruitment App CI
+name: CI-CD-Recruitment-App
 
 on:
   push:
     branches:
       - main
 
-  workflow_dispatch:
-    inputs:
-      image_tag:
-        description: "Docker image tag (v1.0.3, build-102, release-2026-01-14)"
-        required: true
-
 env:
-  REGISTRY: myacr.azurecr.io        # change if Docker Hub
-  IMAGE_NAME: recruitment-app    
+  ACR_NAME: amritarecruitacr
+  ACR_LOGIN_SERVER: amritarecruitacr.azurecr.io
+  IMAGE_NAME: recruitment-app
+  AKS_CLUSTER_NAME: aks-AmritaRecruitment
+  AKS_RESOURCE_GROUP: LabsKraft360
+  HELM_RELEASE_NAME: recruitment
+  HELM_CHART_PATH: ./recruitment-chart
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    # 1. Checkout source code
-    - name: Checkout Code
-      uses: actions/checkout@v4
+      # ---------------------------
+      # 1️⃣ Checkout source code
+      # ---------------------------
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    # 2. Decide image tag dynamically
-    - name: Set Image Tag
-      run: |
-        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-          echo "TAG=${{ github.event.inputs.image_tag }}" >> $GITHUB_ENV
-        else
-          echo "TAG=build-${{ github.run_number }}" >> $GITHUB_ENV
-        fi
+      # ---------------------------
+      # 2️⃣ Azure Login
+      # ---------------------------
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    # 3. Login to Azure Container Registry
-    - name: Login to ACR
-      uses: azure/docker-login@v1
-      with:
-        login-server: myacr.azurecr.io
-        username: ${{ secrets.ACR_USERNAME }}
-        password: ${{ secrets.ACR_PASSWORD }}
+      # ---------------------------
+      # 3️⃣ Login to Azure Container Registry
+      # ---------------------------
+      - name: Login to ACR
+        run: |
+          az acr login --name $ACR_NAME
 
-    # 4. Run tests (optional)
-    - name: Run Tests
-      run: |
-        if [ -f package.json ]; then
-          npm install
-          npm test || echo "No tests found, skipping"
-        fi
+      # ---------------------------
+      # 4️⃣ Build & Push Docker Image
+      # ---------------------------
+      - name: Build and Push Docker Image
+        run: |
+          IMAGE_TAG=${{ github.run_number }}
+          docker build -t $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG .
+          docker push $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG
 
-    # 5. Build Docker image
-    - name: Build Docker Image
-      run: |
-        docker build -t $REGISTRY/$IMAGE_NAME:$TAG .
+      # ---------------------------
+      # 5️⃣ Set AKS context
+      # ---------------------------
+      - name: Get AKS credentials
+        run: |
+          az aks get-credentials \
+            --resource-group $AKS_RESOURCE_GROUP \
+            --name $AKS_CLUSTER_NAME \
+            --overwrite-existing
 
-    # 6. Push Docker image to registry
-    - name: Push Docker Image
-      run: |
-        docker push $REGISTRY/$IMAGE_NAME:$TAG
+      # ---------------------------
+      # 6️⃣ Deploy using Helm
+      # ---------------------------
+      - name: Helm Upgrade / Install
+        run: |
+          helm upgrade --install $HELM_RELEASE_NAME $HELM_CHART_PATH \
+            --set recruitmentApp.image.tag=${{ github.run_number }}
