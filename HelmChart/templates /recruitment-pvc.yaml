@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.fitnessPVC.name }}
+spec:
+  accessModes:
+    - {{ .Values.fitnessPVC.accessMode }}
+  storageClassName: {{ .Values.fitnessPVC.storageClassName }}
+  resources:
+    requests:
+      storage: {{ .Values.fitnessPVC.size }}
