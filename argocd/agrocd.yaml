@@ -9,7 +9,7 @@ spec:
   source:
     repoURL: https://github.com/amritasannigrahi3944-sys/Recruitment-App-Project.git
     targetRevision: azure-devops
-    path: charts/recruitment-app
+    path: HelmChart
     helm:
       valueFiles:
         - values.yaml
