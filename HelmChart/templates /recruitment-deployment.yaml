@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.recruitmentApp.name }}
+  labels:
+    app: {{ .Values.recruitmentApp.name }}
+spec:
+  replicas: {{ .Values.recruitmentApp.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.recruitmentApp.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.recruitmentApp.name }}
+    spec:
+      containers:
+        - name: {{ .Values.recruitmentApp.name }}
+          image: "{{ .Values.recruitmentApp.image.repository }}:{{ .Values.recruitmentApp.image.tag }}"
+          ports:
+            - containerPort: {{ .Values.recruitmentApp.containerPort }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.configMap.name }}
+            - secretRef:
+                name: {{ .Values.secret.name }}
