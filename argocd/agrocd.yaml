@@ -8,8 +8,8 @@ spec:
 
   source:
     repoURL: https://github.com/amritasannigrahi3944-sys/Recruitment-App-Project.git
-    targetRevision: azure-devops
-    path: HelmChart
+    targetRevision: azure-devops   # change to main if needed
+    path: HelmChart                # must contain Chart.yaml
     helm:
       valueFiles:
         - values.yaml
@@ -24,3 +24,4 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+
