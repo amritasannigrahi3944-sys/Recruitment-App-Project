@@ -1,6 +1,6 @@
 namespace: recruiement-ns
 
-fitnessApp:
+recruitmentApp:
   name: recruitment-app
   replicas: 2
 
