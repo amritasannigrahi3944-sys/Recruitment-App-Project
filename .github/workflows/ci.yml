@@ -3,7 +3,7 @@ name: CI-CD-Recruitment-App
 on:
   push:
     branches:
-      - main
+      - azure-devops
 
 env:
   ACR_NAME: amritarecruitacr
