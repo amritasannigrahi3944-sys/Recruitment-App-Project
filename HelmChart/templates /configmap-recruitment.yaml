@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-name: {{ .Values.recruitmentApp.name }}-config
-namespace: {{ .Values.namespace }}
-data:
-MONGO_URL: {{ .Values.recruitmentApp.env.MONGO_URL | quote }}
-NODE_ENV: {{ .Values.recruitmentApp.env.NODE_ENV | quote }}
-
