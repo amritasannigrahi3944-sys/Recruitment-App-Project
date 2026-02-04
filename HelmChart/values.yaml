@@ -1,4 +1,4 @@
-namespace: recruiement-ns
+namespace: recruitment-ns
 
 recruitmentApp:
   name: recruitment-app
@@ -11,7 +11,7 @@ recruitmentApp:
   containerPort: 3000
 
   service:
-    name: recruiment-service
+    name: recruitment-service
     type: LoadBalancer
     port: 80
     targetPort: 3000
