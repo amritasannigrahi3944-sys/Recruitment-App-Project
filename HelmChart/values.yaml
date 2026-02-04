@@ -27,8 +27,8 @@ configMap:
   name: recruitment-configmap
 
 # ✅ PVC only REFERENCES existing StorageClass (does NOT create it)
-fitnessPVC:
-  name: fitness-tracker-pvc
+RecruimentPVC:
+  name: Recruitment-pvc
   accessMode: ReadWriteMany
   storageClassName: azurefile-csi
   size: 10Gi
