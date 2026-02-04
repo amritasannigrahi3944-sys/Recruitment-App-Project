@@ -22,17 +22,9 @@ fitnessApp:
     HOST: "0.0.0.0"
     NODE_ENV: production
 
-  datadog:
-    logsSource: nodejs
-    service1: fitness-tracker-service
-    service2: fitness-tracker-app
-    tracePort: "8126"
-    env: production
-    service: fitness-tracker-app
-    version: "1.0.0"
 
 configMap:
-  name: fitness-configmap
+  name: recruitment-configmap
 
 # ✅ PVC only REFERENCES existing StorageClass (does NOT create it)
 fitnessPVC:
