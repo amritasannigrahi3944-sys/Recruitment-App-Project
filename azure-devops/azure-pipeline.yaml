@@ -25,18 +25,17 @@ steps:
       
 - script: |
     echo "Updating Helm values.yaml (app image only)"
-    sed -i "s|\(recruitmentApp.image.tag:\).*|\1 \"$(tag)\"|" charts/recruitment-app/values.yaml
-
-
+    sed -i '/recruitmentApp:/,/mongodb:/ s/^\(\s*tag:\).*/\1 "'"$(tag)"'"/' charts/recruitment-app/values.yaml
+ 
     git config user.email "azure-devops@pipeline.com"
     git config user.name "azure-devops"
-
+ 
     git fetch origin
     git checkout -B azure-devops origin/azure-devops
-
+ 
     git add charts/recruitment-app/values.yaml
-    git commit -m "Update image tag to $(tag)"
-    git push https://$GITHUB_PAT@github.com/amritasannigrahi3944-sys/Recruitment-App-Project.git azure-devops
+    git commit -m "Update recruitment-app image tag to $(tag)"
+    git push https://$GITHUB_PAT@github.com/Mainakdas73/Recruitment-App-Project.git azure-devops
   displayName: Update Helm Image Tag
   env:
     GITHUB_PAT: $(GITHUB_PAT)
