@@ -1,41 +1,81 @@
 trigger:
+
 - azure-devops
-
+ 
 variables:
+
   imageName: recruitment-app
-  acrLoginServer: amritarecruitACR.azurecr.io
+
   tag: $(Build.BuildId)
-
+ 
 pool:
-  vmImage: ubuntu-latest
 
+  vmImage: ubuntu-latest
+ 
 steps:
+
+# 1️⃣ Checkout repository (needed for git push)
+
 - checkout: self
+
   persistCredentials: true
+ 
+# 2️⃣ Build & push Docker image to ACR
 
 - task: Docker@2
+
   displayName: Build and Push Docker Image
+
   inputs:
+
     command: buildAndPush
+
     repository: $(imageName)
+
     dockerfile: Dockerfile
+
     containerRegistry: AmritaRecruitServiceACR
+
     tags: |
+
       $(tag)
-      
+ 
+# 3️⃣ Update Helm values and push back to repo
+
 - script: |
-    echo "Updating Helm values.yaml (app image only)"
-    sed -i '/recruitmentApp:/,/mongodb:/ s/^\(\s*tag:\).*/\1 "'"$(tag)"'"/' charts/recruitment-app/values.yaml
+
+    set -e
+
+    VALUES_FILE="charts/Values.yaml"
+ 
+    echo "Updating image tag to $(tag)"
+
+    echo "File: $VALUES_FILE"
+ 
+    echo "Before update:"
+
+    grep -n "tag:" $VALUES_FILE || true
+ 
+    sed -i "s/^\(\s*tag:\s*\).*/\1$(tag)/" $VALUES_FILE
+ 
+    echo "After update:"
+
+    grep -n "tag:" $VALUES_FILE
  
     git config user.email "azure-devops@pipeline.com"
+
     git config user.name "azure-devops"
  
-    git fetch origin
-    git checkout -B azure-devops origin/azure-devops
- 
-    git add HelmChart/values.yaml
-    git commit -m "Update recruitment-app image tag to $(tag)"
-    git push https://$GITHUB_PAT@github.com/amritasannigrahi3944-sys/Recruitment-App-Project.git azure-devops
+    git status
+
+    git add $VALUES_FILE
+
+    git commit -m "ci: update recruitment-app image tag to $(tag)"
+
+    git push origin HEAD:azure-devops
+
   displayName: Update Helm Image Tag
+
+ 
   env:
     GITHUB_PAT: $(GITHUB_PAT)
