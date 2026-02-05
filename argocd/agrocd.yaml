@@ -8,15 +8,15 @@ spec:
 
   source:
     repoURL: https://github.com/amritasannigrahi3944-sys/Recruitment-App-Project.git
-    targetRevision: azure-devops   # change to main if needed
-    path: HelmChart                # must contain Chart.yaml
+    targetRevision: azure-devops          # OK if this branch exists
+    path: HelmChart                       # ✅ Chart root (correct)
     helm:
       valueFiles:
         - values.yaml
 
   destination:
     server: https://kubernetes.default.svc
-    namespace: recruitment-ns
+    namespace: recruitment-ns             # ✅ Managed by Argo CD
 
   syncPolicy:
     automated:
@@ -24,4 +24,5 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+
 
