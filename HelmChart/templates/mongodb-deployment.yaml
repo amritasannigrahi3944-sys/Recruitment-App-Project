@@ -2,8 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.mongodb.name }}
-  labels:
-    app: {{ .Values.mongodb.name }}
+  namespace: {{ .Values.namespace }}
 spec:
   replicas: {{ .Values.mongodb.replicas }}
   selector:
@@ -16,12 +15,20 @@ spec:
     spec:
       containers:
         - name: mongodb
-          image: "{{ .Values.mongodb.image }}:{{ .Values.mongodb.tag }}"
+          image: {{ .Values.mongodb.image }}:{{ .Values.mongodb.tag }}
           ports:
             - containerPort: {{ .Values.mongodb.containerPort }}
-          envFrom:
-            - secretRef:
-                name: {{ .Values.secret.name }}
+          env:
+            - name: MONGO_INITDB_ROOT_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: MONGO_USERNAME
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: MONGO_PASSWORD
           volumeMounts:
             - name: mongodb-storage
               mountPath: /data/db
