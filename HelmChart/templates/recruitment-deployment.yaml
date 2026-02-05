@@ -13,6 +13,8 @@ spec:
       labels:
         app: {{ .Values.recruitmentApp.name }}
     spec:
+      imagePullSecrets:                # 👈 ADD HERE
+        - name: acr-secret              # 👈 THIS LINE
       containers:
         - name: {{ .Values.recruitmentApp.name }}
           image: {{ .Values.recruitmentApp.image.repository }}:{{ .Values.recruitmentApp.image.tag }}
