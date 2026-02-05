@@ -6,7 +6,7 @@ recruitmentApp:
 
   image:
     repository: amritarecruitacr.azurecr.io/recruitment-app
-    tag: "455"
+    tag: "11336"
 
   containerPort: 3000
 
