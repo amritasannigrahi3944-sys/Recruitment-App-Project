@@ -2,8 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.recruitmentApp.name }}
-  labels:
-    app: {{ .Values.recruitmentApp.name }}
+  namespace: {{ .Values.namespace }}
 spec:
   replicas: {{ .Values.recruitmentApp.replicas }}
   selector:
@@ -16,11 +15,11 @@ spec:
     spec:
       containers:
         - name: {{ .Values.recruitmentApp.name }}
-          image: "{{ .Values.recruitmentApp.image.repository }}:{{ .Values.recruitmentApp.image.tag }}"
+          image: {{ .Values.recruitmentApp.image.repository }}:{{ .Values.recruitmentApp.image.tag }}
           ports:
             - containerPort: {{ .Values.recruitmentApp.containerPort }}
-          envFrom:
-            - configMapRef:
-                name: {{ .Values.configMap.name }}
-            - secretRef:
-                name: {{ .Values.secret.name }}
+          env:
+            - name: NODE_ENV
+              value: {{ .Values.recruitmentApp.env.NODE_ENV | quote }}
+            - name: MONGODB_URI
+              value: {{ .Values.recruitmentApp.env.MONGODB_URI | quote }}
