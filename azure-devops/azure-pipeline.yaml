@@ -33,7 +33,7 @@ steps:
     git fetch origin
     git checkout -B azure-devops origin/azure-devops
  
-    git add charts/recruitment-app/values.yaml
+    git add HelmChart/values.yaml
     git commit -m "Update recruitment-app image tag to $(tag)"
     git push https://$GITHUB_PAT@github.com/amritasannigrahi3944-sys/Recruitment-App-Project.git azure-devops
   displayName: Update Helm Image Tag
