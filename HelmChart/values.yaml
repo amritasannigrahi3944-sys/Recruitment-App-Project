@@ -17,25 +17,13 @@ recruitmentApp:
     targetPort: 3000
 
   env:
-    MONGODB_URI: mongodb://mongodb-service:27017/recruitment
-    PORT: "3000"
-    HOST: "0.0.0.0"
+    MONGODB_URI: mongodb://mongodb-service:27017/recruitmentdb
     NODE_ENV: production
 
 
-configMap:
-  name: recruitment-configmap
-
-# ✅ PVC only REFERENCES existing StorageClass (does NOT create it)
-RecruitmentPVC:
-  name: Recruitment-pvc
-  accessMode: ReadWriteMany
-  storageClassName: azurefile-csi
-  size: 10Gi
-
 mongodb:
   name: mongodb
-  replicas: 2
+  replicas: 1
 
   image: mongo
   tag: "455"
