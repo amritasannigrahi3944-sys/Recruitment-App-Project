@@ -13,15 +13,19 @@ spec:
       labels:
         app: {{ .Values.recruitmentApp.name }}
     spec:
-      imagePullSecrets:                # 👈 ADD HERE
-        - name: acr-secret              # 👈 THIS LINE
       containers:
         - name: {{ .Values.recruitmentApp.name }}
-          image: {{ .Values.recruitmentApp.image.repository }}:{{ .Values.recruitmentApp.image.tag }}
+          image: "{{ .Values.recruitmentApp.image.repository }}:{{ .Values.recruitmentApp.image.tag }}"
+          imagePullPolicy: Always
           ports:
             - containerPort: {{ .Values.recruitmentApp.containerPort }}
+
           env:
-            - name: NODE_ENV
-              value: {{ .Values.recruitmentApp.env.NODE_ENV | quote }}
             - name: MONGODB_URI
-              value: {{ .Values.recruitmentApp.env.MONGODB_URI | quote }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.secret.name }}
+                  key: MONGODB_URI
+
+            - name: NODE_ENV
+              value: "{{ .Values.recruitmentApp.env.NODE_ENV }}"
